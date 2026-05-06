@@ -10,9 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 import os
 import dj_database_url
-from decouple import config
+#from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,15 +92,16 @@ WSGI_APPLICATION = 'educoredb.wsgi.application'
 # Override with PostgreSQL if DATABASE_URL is set (e.g., in production)
 DATABASES = {
     'default': {
-        #=====Enable Only Making Project Live on Heroku====
-         'ENGINE': 'django.db.backends.sqlite3',
-         'NAME': os.path.join(BASE_DIR, 'sms.sqlite3'),
-         #'ENGINE': 'django.db.backends.mysql',
-         #'NAME': 'educoredb',
-         #'USER': 'sms',
-         #'PASSWORD': 'student_management_password',
-         #'HOST': 'localhost',
-         #'PORT': '3306'
+        #=====MySQL via XAMPP====
+         'ENGINE': 'django.db.backends.mysql',
+         'NAME': 'educoredb',
+         'USER': 'root',
+         'PASSWORD': '',
+         'HOST': 'localhost',
+         'PORT': '3306',
+         'OPTIONS': {
+             'charset': 'utf8mb4',
+         }
     }
 }
 
