@@ -1,0 +1,273 @@
+{% extends 'staff_template/base_template.html' %}
+{% block page_title %}
+Home
+{% endblock page_title %}
+{% block main_content %}
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="callout callout-primary shadow-sm rounded">
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                <div>
+                  <h3 class="mb-2">Welcome back, {{ request.user.first_name|default:request.user.username }}!</h3>
+                  <p class="text-muted mb-0">Track your class activity, attendance, and leave requests from one central dashboard.</p>
+                </div>
+                <div class="mt-3 mt-md-0">
+                  <a href="{% url 'staff_take_attendance' %}" class="btn btn-primary mr-2">Take Attendance</a>
+                  <a href="{% url 'staff_apply_leave' %}" class="btn btn-outline-secondary">Apply Leave</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-3 col-md-6 mb-3">
+            <div class="info-box bg-gradient-info shadow-sm">
+              <span class="info-box-icon"><i class="fas fa-user-graduate"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Students Assigned</span>
+                <span class="info-box-number">{{ students_count }}</span>
+                <span class="progress-description">Learners under your supervision</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-3">
+            <div class="info-box bg-gradient-success shadow-sm">
+              <span class="info-box-icon"><i class="fas fa-clipboard-check"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Attendance Logged</span>
+                <span class="info-box-number">{{ attendance_count }}</span>
+                <span class="progress-description">Sessions recorded so far</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-3">
+            <div class="info-box bg-gradient-warning shadow-sm">
+              <span class="info-box-icon"><i class="fas fa-calendar-alt"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Leave Requests</span>
+                <span class="info-box-number">{{ leave_count }}</span>
+                <span class="progress-description">Requests processed</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-3">
+            <div class="info-box bg-gradient-danger shadow-sm">
+              <span class="info-box-icon"><i class="fas fa-book-open"></i></span>
+              <div class="info-box-content">
+                <span class="info-box-text">Subjects Covered</span>
+                <span class="info-box-number">{{ subject_count }}</span>
+                <span class="progress-description">Active teaching subjects</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-6 mb-4">
+            <div class="card card-outline card-primary shadow-sm">
+              <div class="card-header border-0">
+                <h3 class="card-title">Attendance vs Leave</h3>
+              </div>
+              <div class="card-body">
+                <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 mb-4">
+            <div class="card card-outline card-success shadow-sm">
+              <div class="card-header border-0">
+                <h3 class="card-title">Subject Attendance</h3>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <canvas id="barChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12 mb-4">
+            <div class="card card-outline card-info shadow-sm">
+              <div class="card-header border-0">
+                <h3 class="card-title">Student Attendance Overview</h3>
+              </div>
+              <div class="card-body">
+                <div class="chart">
+                  <canvas id="barChart2" style="min-height: 260px; height: 260px; max-height: 260px; max-width: 100%;"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+{% endblock main_content %}
+{% block custom_js %}
+<script>
+    $(document).ready(function(){
+      var pieData  = {
+        labels: [
+            'Attendance',
+            'Leave'
+        ],
+        datasets: [
+          {
+            data: [{{ attendance_count }}, {{ leave_count }}],
+            backgroundColor: ['#007bff', '#ffc107'],
+          }
+        ]
+      }
+      var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+      var pieOptions = {
+        maintainAspectRatio: false,
+        responsive: true,
+      }
+      new Chart(pieChartCanvas, {
+        type: 'pie',
+        data: pieData,
+        options: pieOptions
+      })
+
+      var attendance_list = {{ attendance_list }};
+      var subject_list = {{ subject_list|safe }};
+      var barChartData = {
+        labels: subject_list,
+        datasets: [
+          {
+            label: 'Attend Subject Chart',
+            backgroundColor: 'rgba(60,141,188,0.9)',
+            borderColor: 'rgba(60,141,188,0.8)',
+            pointRadius: false,
+            pointColor: '#3b8bba',
+            pointStrokeColor: 'rgba(60,141,188,1)',
+            pointHighlightFill: '#fff',
+            pointHighlightStroke: 'rgba(60,141,188,1)',
+            data: attendance_list
+          }
+        ]
+      }
+      var barChartCanvas = $('#barChart').get(0).getContext('2d')
+      new Chart(barChartCanvas, {
+        type: 'bar',
+        data: barChartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          datasetFill: false
+        }
+      })
+
+      var student_list = {{ student_list|safe }};
+      var present_list = {{ present_list }};
+      var absent_list = {{ absent_list }};
+      var barChartData2 = {
+        labels: student_list,
+        datasets: [
+          {
+            label: 'Present',
+            backgroundColor: 'rgba(40,167,69,0.9)',
+            borderColor: 'rgba(40,167,69,0.8)',
+            data: present_list
+          },
+          {
+            label: 'Absent',
+            backgroundColor: 'rgba(220,53,69,0.9)',
+            borderColor: 'rgba(220,53,69,0.8)',
+            data: absent_list
+          }
+        ]
+      }
+      var barChartCanvas2 = $('#barChart2').get(0).getContext('2d')
+      new Chart(barChartCanvas2, {
+        type: 'bar',
+        data: barChartData2,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          datasetFill: false
+        }
+      })
+    });
+</script>
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-messaging.js"></script>
+<script>
+    var firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "FIREBASE_AUTH_URL",
+        databaseURL: "FIREBASE_DATABASE_URL",
+        projectId: "FIREBASE_PROJECT_ID",
+        storageBucket: "FIREBASE_STORAGE_BUCKET_URL",
+        messagingSenderId: "FIREBASE_SENDER_ID",
+        appId: "FIREBASE_APP_ID",
+        measurementId: "FIREBASE_MEASUREMENT_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+    function IntitalizeFireBaseMessaging() {
+        messaging
+            .requestPermission()
+            .then(function () {
+                console.log("Notification Permission");
+                return messaging.getToken();
+            })
+            .then(function (token) {
+                console.log("Token : " + token);
+                sendToServer(token);
+            })
+            .catch(function (reason) {
+                console.log(reason);
+            });
+    }
+
+    messaging.onMessage(function (payload) {
+        console.log(payload);
+        const notificationOption = {
+            body: payload.notification.body,
+            icon: payload.notification.icon
+        };
+
+        if (Notification.permission === "granted") {
+            var notification = new Notification(payload.notification.title, notificationOption);
+            notification.onclick = function (ev) {
+                ev.preventDefault();
+                window.open(payload.notification.click_action, '_blank');
+                notification.close();
+            }
+        }
+    });
+
+    messaging.onTokenRefresh(function () {
+        messaging.getToken()
+            .then(function (newtoken) {
+                console.log("New Token : " + newtoken);
+                sendToServer(newtoken);
+            })
+            .catch(function (reason) {
+                console.log(reason);
+            })
+    });
+
+    function sendToServer(token) {
+         $.ajax({
+                url: '{% url 'staff_fcmtoken_save' %}',
+                type: 'POST',
+                data: { token: token },
+            })
+            .done(function(response) {
+                if (response == "True") {
+                    console.log("Token Save");
+                } else {
+                    console.log("Error in Token Save");
+                }
+            });
+    }
+    IntitalizeFireBaseMessaging();
+</script>
+{% endblock custom_js %}

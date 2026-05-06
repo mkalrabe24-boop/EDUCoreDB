@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>EDUCoreDB | Admin Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{% static "plugins/fontawesome-free/css/all.min.css" %}">
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <link rel="stylesheet" href="{% static "plugins/icheck-bootstrap/icheck-bootstrap.min.css" %}">
+  <link rel="stylesheet" href="{% static "dist/css/adminlte.min.css" %}">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+  <style>
+    body.login-page {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0b5394 0%, #073763 100%);
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 460px;
+      margin: 4.5rem auto;
+    }
+
+    .login-logo a {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 2rem;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    }
+
+    .card.card-outline.card-primary {
+      border-top: 4px solid #007bff;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-header {
+      background: linear-gradient(90deg, rgba(0, 123, 255, 0.95), rgba(23, 162, 184, 0.95));
+      border: none;
+      color: #fff;
+      text-align: center;
+      padding: 1.3rem 1.5rem;
+    }
+
+    .card-header h1 {
+      font-size: 1.55rem;
+      margin: 0;
+      font-weight: 700;
+    }
+
+    .login-card-body {
+      padding: 2rem;
+      border-radius: 0 0 1rem 1rem;
+    }
+
+    .login-box-msg {
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+      color: #495057;
+    }
+
+    .input-group .input-group-text {
+      background: #f4f6f9;
+      border: 1px solid #ced4da;
+      color: #6c757d;
+    }
+
+    .form-control {
+      border-radius: 0.35rem;
+    }
+  </style>
+</head>
+
+<body class="hold-transition login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <a href="#"><b>EDUCore</b>DB</a>
+    </div>
+    <div class="card card-outline card-primary">
+      <div class="card-header">
+        <h1>Create Admin Account</h1>
+      </div>
+      <div class="card-body login-card-body">
+        <p class="login-box-msg">Register a new admin user for EDUCoreDB.</p>
+
+        <form action="/do_admin_signup" method="post" id="demo-form">
+          {% csrf_token %}
+          <div class="input-group mb-3">
+            <input type="email" class="form-control" placeholder="Email" name="email">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Username" name="username">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-envelope"></span>
+              </div>
+            </div>
+          </div>
+          <div class="input-group mb-3">
+            <input type="password" class="form-control" placeholder="Password" name="password">
+            <div class="input-group-append">
+              <div class="input-group-text">
+                <span class="fas fa-lock"></span>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">Create Admin</button>
+        </form>
+
+        <div class="mt-4 text-center">
+          <a href="{% url 'show_login' %}">Back to sign in</a>
+        </div>
+      </div>
+      <!-- /.login-card-body -->
+    </div>
+  </div>
+  <!-- /.login-box -->
+
+  <!-- jQuery -->
+  <script src="{% static "plugins/jquery/jquery.min.js" %}"></script>
+  <!-- Bootstrap 4 -->
+  <script src="{% static "plugins/bootstrap/js/bootstrap.bundle.min.js" %}"></script>
+  <!-- AdminLTE App -->
+  <script src="{% static "dist/js/adminlte.min.js" %}"></script>
+
+</body>
+
+</html>
