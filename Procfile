@@ -1,1 +1,0 @@
-web: gunicorn educoredb.wsgi --log-file -
